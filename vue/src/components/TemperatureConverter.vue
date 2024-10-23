@@ -43,11 +43,11 @@ celsiusToFahrenheit();
 <template>
   <h1>Temperature converter</h1>
 
-  <input type="number" :value="celsiusDisplay" @input="celsiusToFahrenheit" :autofocus step="0.1">
-  <span>&deg;C</span>
+  <input id="celsius" type="number" :value="celsiusDisplay" @input="celsiusToFahrenheit" :autofocus step="0.1">
+  <label for="celsius">&deg;C</label>
   <span> = </span>
-  <input type="number" :value="fahrenheitDisplay" @input="fahrenheitToCelsius" step="0.1">
-  <span>&deg;F</span>
+  <input id="fahrenheit" type="number" :value="fahrenheitDisplay" @input="fahrenheitToCelsius" step="0.1">
+  <label for="fahrenheit">&deg;F</label>
 </template>
 
 <style scoped>
