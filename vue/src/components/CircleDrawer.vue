@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
 import CircleDrawerChangeDialogue from "./CircleDrawerChangeDialogue.vue";
+import CircleDrawerHistory from "./CircleDrawerHistory.vue";
 
 const defaultRadius = 25;
 
@@ -11,10 +12,14 @@ let circleId = 0;
 const circles = ref([]);
 const selectedCircle = ref(null);
 
+const history = ref(null);
+
 onMounted(() => {
   canvasEl.value.setAttribute("width", canvasEl.value.offsetWidth);
   canvasEl.value.setAttribute("height", canvasEl.value.offsetHeight);
   context.value = canvasEl.value.getContext("2d");
+
+  history.value.push(circles.value);
 });
 
 function computeRelativeMousePosition(event) {
@@ -45,6 +50,20 @@ function drawCircles() {
   }
 }
 
+function createCircle(x, y, fill = false, radius = defaultRadius) {
+  const circle = {
+    id: circleId++,
+    x: x,
+    y: y,
+    r: radius,
+    fill: fill,
+  };
+  circles.value.push(circle);
+  history.value.push(circles.value);
+
+  return circle;
+}
+
 function addCircle(event) {
   // Deselect circle if one is selected, but don't add a new circle 
   if (selectedCircle.value) {
@@ -56,14 +75,7 @@ function addCircle(event) {
   // compute relative click position inside canvas
   const { x, y } = computeRelativeMousePosition(event);
 
-  const circle = {
-    id: circleId++,
-    x: x,
-    y: y,
-    r: defaultRadius,
-    fill: true,
-  };
-  circles.value.push(circle);
+  createCircle(x, y, true);
   drawCircles();
 }
 
@@ -97,6 +109,7 @@ async function openChangeDialogue(event) {
   for (const circle of circles.value.reverse()) {
     if (circle.fill) {
       selectedCircle.value = circle;
+      selectedCircle.value.old = { ...circle };
       selectedCircle.value.clientX = event.clientX;
       selectedCircle.value.clientY = event.clientY;
       break;
@@ -106,31 +119,37 @@ async function openChangeDialogue(event) {
   drawCircles();
 }
 
-async function updateRadius(radius) {
+function updateRadius(radius) {
   selectedCircle.value.r = radius;
   drawCircles();
 }
 
-function undo() {
-  console.log("undo");
+function addUpdateToHistory(radius) {
+  history.value.push(circles.value);
 }
 
-function redo() {
-  console.log("redo");
+function handleUndo(event) {
+  console.log("undo", event);
+  circles.value = structuredClone(event.state);
+  drawCircles();
 }
+
+function handleRedo(event) {
+  console.log("redo", event);
+  circles.value = structuredClone(event.state);
+  drawCircles();
+}
+
 </script>
 
 <template>
   <h1>Circle drawer</h1>
 
-  <div>
-    <button
-      @click="undo"
-    >Undo</button>
-    <button
-      @click="redo"
-    >Redo</button>
-  </div>
+  <CircleDrawerHistory 
+    ref="history"
+    @undo="handleUndo"
+    @redo="handleRedo"
+  />
 
   <div>
     <canvas 
@@ -148,6 +167,7 @@ function redo() {
     :x="selectedCircle.clientX"
     :y="selectedCircle.clientY"
     @change-radius="updateRadius"
+    @change-radius-done="addUpdateToHistory"
   />
 
 </template>

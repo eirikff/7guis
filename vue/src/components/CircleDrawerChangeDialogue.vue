@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 
 const props = defineProps(["circle", "x", "y"]);
-const emit = defineEmits(["change-radius"]);
+const emit = defineEmits(["change-radius", "change-radius-done"]);
 
 const divEl = ref(null);
 const radius = ref(0);
@@ -25,6 +25,7 @@ onMounted(() => {
       max="100" 
       v-model.number="radius"
       @input="$emit('change-radius', radius)"
+      @change="$emit('change-radius-done', radius)"
     >
   </div>
 </template>
