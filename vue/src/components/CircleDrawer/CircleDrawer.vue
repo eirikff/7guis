@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
-import CircleDrawerChangeDialogue from "./CircleDrawerChangeDialogue.vue";
-import CircleDrawerHistory from "./CircleDrawerHistory.vue";
+import ChangeDialogue from "./ChangeDialogue.vue";
+import History from "./History.vue";
 
 const defaultRadius = 25;
 
@@ -145,7 +145,7 @@ function handleRedo(event) {
 <template>
   <h1>Circle drawer</h1>
 
-  <CircleDrawerHistory 
+  <History 
     ref="history"
     @undo="handleUndo"
     @redo="handleRedo"
@@ -161,7 +161,7 @@ function handleRedo(event) {
     ></canvas>
   </div>
 
-  <CircleDrawerChangeDialogue 
+  <ChangeDialogue 
     v-if="selectedCircle"
     :circle="selectedCircle" 
     :x="selectedCircle.clientX"

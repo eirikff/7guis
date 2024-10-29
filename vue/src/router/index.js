@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from "../components/Home.vue"
 import CRUD from "../components/CRUD.vue"
 import Cells from "../components/Cells.vue"
-import CircleDrawer from "../components/CircleDrawer.vue"
+import CircleDrawer from "../components/CircleDrawer/CircleDrawer.vue"
 import Counter from "../components/Counter.vue"
 import FlightBooker from "../components/FlightBooker.vue"
 import TemperatureConverter from "../components/TemperatureConverter.vue"
